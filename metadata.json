@@ -1,0 +1,8 @@
+{
+  "name": "Innovation Kitchen and Bath",
+  "description": "Premier full-service kitchen, bathroom, and commercial remodeling company in Central Florida, specializing in custom design, cabinetry, and high-precision stone fabrication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
