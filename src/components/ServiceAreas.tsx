@@ -120,7 +120,7 @@ export default function ServiceAreas({ onBookConsult }: ServiceAreasProps = {}) 
                   ))
                 ) : (
                   <p className="text-[11px] text-amber-400 font-medium italic">
-                    We serve almost anywhere near Orlando/Kissimmee! Call us at (407) 555-0111 to confirm.
+                    We serve almost anywhere near Orlando/Kissimmee! Call us at (407) 989-2802 to confirm.
                   </p>
                 )}
               </div>

@@ -65,8 +65,9 @@ export default function CountertopCustomizer({ onSaveSelection, onSendToAi, save
       let newY = rotationStartRef.current.y + dx * factor;
       let newX = rotationStartRef.current.x - dy * factor;
       
-      // Keep rotation slightly restricted in the vertical pitch to keep the model recognizable
-      newX = Math.max(-20, Math.min(85, newX));
+      // Keep vertical pitch comfortable but allow horizontal rotation (Yaw) to orbit a full 360 degrees freely
+      newX = Math.max(-20, Math.min(60, newX));    // Pitch: -20deg to 60deg
+      // newY rotates fully without restriction for a complete 360-degree interactive orbit
       
       setRotateX(newX);
       setRotateY(newY);
@@ -88,7 +89,9 @@ export default function CountertopCustomizer({ onSaveSelection, onSendToAi, save
       let newY = rotationStartRef.current.y + dx * factor;
       let newX = rotationStartRef.current.x - dy * factor;
       
-      newX = Math.max(-20, Math.min(85, newX));
+      // Keep vertical pitch comfortable but allow horizontal rotation (Yaw) to orbit a full 360 degrees freely
+      newX = Math.max(-20, Math.min(60, newX));    // Pitch: -20deg to 60deg
+      // newY rotates fully without restriction for a complete 360-degree interactive orbit
       
       setRotateX(newX);
       setRotateY(newY);
@@ -216,7 +219,7 @@ export default function CountertopCustomizer({ onSaveSelection, onSendToAi, save
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-neutral-950/85 border border-neutral-800 px-3.5 py-1.5 rounded-full backdrop-blur-xs flex items-center gap-1.5 z-10 pointer-events-none shadow-lg">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span className="text-[9px] font-semibold text-neutral-200 uppercase tracking-wider font-mono">
-              Drag anywhere to rotate 360°
+              Drag anywhere to orbit in 3D
             </span>
           </div>
 
@@ -224,10 +227,10 @@ export default function CountertopCustomizer({ onSaveSelection, onSendToAi, save
           <div className="absolute top-2 left-2 text-neutral-400 text-[9px] font-mono pointer-events-none flex flex-col gap-0.5 bg-neutral-950/80 p-2.5 rounded-xl border border-neutral-800/40 backdrop-blur-xs z-10">
             <div className="text-amber-500 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">📐 Specs Overview</div>
             <div>🔄 Pitch: {Math.round(rotateX)}° | Yaw: {Math.round(rotateY)}°</div>
-            <div>⤢ L-Shape Modular Layout</div>
-            <div>⚡ Integrated Dishwasher & Fridge</div>
-            <div>↕ Backsplash: 18" Slab / Tile</div>
-            <div>↔ Dual Arm Countertops: 3cm Slabs</div>
+            <div>📐 Layout: Modern Premium L-Shape</div>
+            <div>🚰 Faucet: Gooseneck with Seamless Sink</div>
+            <div>❄️ Appliance: French Door Refrigerator</div>
+            <div>🪴 Decor: Floating Walnut Accent Shelf</div>
           </div>
 
           {/* Core Interactive 3D Room Container */}
@@ -238,133 +241,57 @@ export default function CountertopCustomizer({ onSaveSelection, onSendToAi, save
               transformStyle: 'preserve-3d'
             }}
           >
-            {/* 1. ROOM ENVIRONMENT: Wood Plank Floor (Sitting Flat at the Bottom) */}
+            {/* 1. ROOM ENVIRONMENT: Diagonal Tile Floor */}
             <div 
-              className="absolute w-[440px] h-[280px] transition-all duration-500"
+              className="absolute w-[460px] h-[320px] transition-all duration-500"
               style={{ 
-                transform: 'rotateX(90deg) translateZ(-110px) translateY(10px) translateX(0px)',
+                transform: 'rotateX(90deg) translateZ(-110px) translateY(20px)',
                 transformStyle: 'preserve-3d',
-                background: 'linear-gradient(rgba(100,60,20,0.18) 2px, transparent 2px) #dfa76e',
-                backgroundSize: '100% 16px',
+                background: 'repeating-linear-gradient(45deg, #e4e4e7 0px, #e4e4e7 1px, transparent 1px, transparent 32px), repeating-linear-gradient(-45deg, #e4e4e7 0px, #e4e4e7 1px, #f4f4f5 1px, #f4f4f5 32px)',
+                boxShadow: 'inset 0 0 40px rgba(0,0,0,0.15)'
               }}
             >
-              {/* Floor Shadow / Border Trim */}
-              <div className="absolute inset-0 border border-amber-950/20 rounded-xl shadow-[inset_0_0_35px_rgba(0,0,0,0.45)]" />
+              <div className="absolute inset-0 border border-zinc-300 rounded-xl" />
             </div>
 
-            {/* 2. ROOM ENVIRONMENT: Back Wall (Textured plaster backdrop) */}
+            {/* 2. ROOM ENVIRONMENT: Back Wall (Clean light plaster paint) */}
             <div 
-              className="absolute w-[440px] h-[220px] bg-neutral-800/30 border border-neutral-700/20 shadow-inner rounded-t-lg transition-all duration-500 flex flex-col justify-between p-3"
+              className="absolute w-[460px] h-[230px] bg-zinc-100 border border-zinc-200 shadow-sm rounded-t-lg transition-all duration-500"
               style={{ 
                 transform: 'translateZ(-130px) translateY(-15px) translateX(0px)',
                 transformStyle: 'preserve-3d',
                 backfaceVisibility: 'hidden'
               }}
             >
-              {/* Subtle grid lines to simulate clean tiles / architectural panels */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[length:100%_20px] pointer-events-none opacity-40" />
+              {/* Ceiling Recessed Spotlights */}
+              <div className="absolute top-2 inset-x-0 flex justify-around px-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="flex flex-col items-center">
+                    <div className="w-4 h-4 rounded-full bg-white border border-zinc-300 shadow-[0_0_12px_#ffffff] flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-200" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* 3. ROOM ENVIRONMENT: Left Wall (Perpendicular left corner block) */}
+            {/* 3. ROOM ENVIRONMENT: Left Wall (Clean light plaster) */}
             <div 
-              className="absolute w-[280px] h-[220px] bg-neutral-800/25 border-r border-neutral-700/20 transition-all duration-500"
+              className="absolute w-[320px] h-[230px] bg-zinc-100/95 border-r border-zinc-200 transition-all duration-500"
               style={{ 
-                transform: 'rotateY(90deg) translateZ(-220px) translateY(-15px) translateX(110px)',
+                transform: 'rotateY(90deg) translateZ(-230px) translateY(-15px) translateX(115px)',
                 transformStyle: 'preserve-3d',
                 backfaceVisibility: 'hidden'
               }}
             />
 
-            {/* 4. UPPER FLOATING OAK SHELF with accessories on Back Wall */}
-            <div 
-              className="absolute w-[220px] h-[35px] bg-amber-800 border border-amber-900/40 rounded-sm shadow-md transition-all duration-500"
-              style={{ 
-                transform: 'rotateX(90deg) translateZ(-65px) translateY(-110px) translateX(-35px)',
-                transformStyle: 'preserve-3d'
-              }}
-            >
-              {/* Shelf Accessories sticking straight up (rotated back -90 deg) */}
-              <div 
-                className="absolute inset-x-0 bottom-1 h-20 flex justify-around items-end"
-                style={{ transform: 'rotateX(-90deg) translateZ(10px)' }}
-              >
-                {/* Small potted hanging plant */}
-                <div className="w-8 h-8 rounded-full bg-emerald-800/20 relative flex items-center justify-center border border-emerald-900/10">
-                  <div className="w-5 h-5 rounded-full bg-amber-950 flex items-center justify-center overflow-hidden border border-amber-900">
-                    <span className="text-[5px] text-emerald-400 font-bold uppercase">IVY</span>
-                  </div>
-                  {/* Trailing plant vines */}
-                  <div className="absolute top-6 left-1/2 -translate-x-1/2 w-4 h-6 bg-gradient-to-b from-emerald-500/80 to-transparent rounded-b-md blur-[0.5px]" />
-                </div>
-                {/* Ceramic Stacked Cups */}
-                <div className="flex flex-col-reverse items-center justify-end h-8">
-                  <div className="w-6 h-3 bg-neutral-100 border border-neutral-200 rounded-sm shadow-sm" />
-                  <div className="w-5 h-2.5 bg-amber-100 border border-amber-200 rounded-sm shadow-xs -mb-1" />
-                </div>
-                {/* Plate Stack */}
-                <div className="w-7 h-4 flex flex-col justify-end gap-0.5">
-                  <div className="w-full h-0.5 bg-neutral-200 rounded-full border border-neutral-300" />
-                  <div className="w-full h-0.5 bg-neutral-200 rounded-full border border-neutral-300" />
-                  <div className="w-full h-0.5 bg-neutral-200 rounded-full border border-neutral-300" />
-                </div>
-              </div>
-            </div>
-
-            {/* 5. TALL REFRIGERATOR (Stainless Steel Double Door on the Right End) */}
-            <div 
-              className="absolute w-[80px] h-[175px] transition-all duration-500"
-              style={{ 
-                transform: 'translateZ(-95px) translateY(-2.5px) translateX(155px)',
-                transformStyle: 'preserve-3d'
-              }}
-            >
-              {/* REFRIGERATOR FRONT FACE */}
-              <div 
-                className="absolute inset-0 bg-gradient-to-r from-zinc-300 via-zinc-100 to-zinc-400 border border-zinc-400 shadow-2xl rounded-t-lg flex flex-col justify-between p-2.5"
-                style={{ transform: 'translateZ(35px)' }}
-              >
-                {/* French Door split line */}
-                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-zinc-500/40" />
-
-                {/* Left & Right Door Grab Handles */}
-                <div className="absolute right-[41px] top-24 w-1 h-14 bg-amber-400 rounded-sm shadow border border-amber-500/30" />
-                <div className="absolute left-[41px] top-24 w-1 h-14 bg-amber-400 rounded-sm shadow border border-amber-500/30" />
-
-                {/* High-Tech Ice & Water Dispenser */}
-                <div className="absolute left-3 top-12 w-10 h-12 bg-neutral-900 border border-neutral-800 rounded p-1 shadow-inner flex flex-col justify-between items-center">
-                  {/* Glowing touch interface screen */}
-                  <div className="w-full h-3 bg-sky-950 border border-sky-800/50 rounded-[1px] flex items-center justify-center">
-                    <span className="text-[5px] text-sky-400 font-mono font-bold tracking-tighter">68°F COOL</span>
-                  </div>
-                  {/* Dispenser cavity */}
-                  <div className="w-6 h-5 bg-neutral-950 border border-neutral-800 rounded flex items-center justify-center">
-                    <div className="w-1 h-2.5 bg-zinc-700 rounded-full" />
-                  </div>
-                </div>
-
-                {/* Freezer Bottom Drawer */}
-                <div className="absolute bottom-0 left-0 right-0 h-44 border-t border-zinc-400/80 bg-gradient-to-b from-zinc-300 via-zinc-200 to-zinc-400 flex items-start justify-center pt-3">
-                  {/* Freezer handle */}
-                  <div className="w-14 h-1 bg-amber-400 rounded-sm shadow" />
-                </div>
-              </div>
-
-              {/* REFRIGERATOR LEFT SIDE FACE (Visible in ISO view) */}
-              <div 
-                className="absolute top-0 bottom-0 left-[-70px] w-[70px] bg-neutral-700 border-l border-neutral-600 transition-all duration-500 filter brightness-75"
-                style={{ 
-                  transform: 'rotateY(-90deg) translateZ(35px)',
-                  transformOrigin: 'right'
-                }}
-              />
-            </div>
-
-            {/* 6. BACKSPLASH STYLE (Standing upright along the back wall) */}
+            {/* DYNAMIC BACKSPLASH SYSTEM (Wraps around back and left walls of L-Shape) */}
+            {/* Back Wall Backsplash */}
             {selection.backsplash !== 'none' && (
               <div 
-                className="absolute w-[270px] h-[55px] border border-neutral-700/30 overflow-hidden shadow-2xl transition-all duration-500"
+                className="absolute w-[290px] h-[50px] border border-neutral-700/10 overflow-hidden shadow-sm transition-all duration-500"
                 style={{ 
-                  transform: 'translateZ(-125px) translateY(-32px) translateX(-20px)',
+                  transform: 'translate3d(-85px, -27.5px, -128px)',
                   transformStyle: 'preserve-3d',
                   backfaceVisibility: 'hidden'
                 }}
@@ -373,251 +300,593 @@ export default function CountertopCustomizer({ onSaveSelection, onSendToAi, save
                   <div className={`absolute inset-0 ${selectedStone.bgStyle} opacity-95 transition-all duration-500`} />
                 )}
                 {selection.backsplash === 'subway' && (
-                  <div className="absolute inset-0 bg-neutral-100 transition-all duration-500 flex flex-wrap gap-[1px] p-1 justify-center content-start">
+                  <div className="absolute inset-0 bg-neutral-100 transition-all duration-500 flex flex-wrap gap-[1px] p-0.5 justify-center content-start">
                     {Array.from({ length: 48 }).map((_, i) => (
-                      <div key={i} className="w-7 h-3.5 bg-white border border-neutral-200 rounded-[0.5px] shadow-[0_0.5px_0.5px_rgba(0,0,0,0.05)]" />
+                      <div key={i} className="w-6 h-3 bg-white border border-neutral-200 rounded-[0.5px] shadow-[0_0.5px_0.5px_rgba(0,0,0,0.05)]" />
                     ))}
                   </div>
                 )}
                 {selection.backsplash === 'mosaic' && (
-                  <div className="absolute inset-0 bg-neutral-850 transition-all duration-500 grid grid-cols-12 gap-[0.5px] p-0.5">
-                    {Array.from({ length: 84 }).map((_, i) => (
+                  <div className="absolute inset-0 bg-neutral-800 transition-all duration-500 grid grid-cols-12 gap-[0.5px] p-0.5">
+                    {Array.from({ length: 60 }).map((_, i) => (
                       <div key={i} className={`w-full h-1.5 rounded-[0.5px] ${i % 4 === 0 ? 'bg-amber-100/60' : i % 4 === 1 ? 'bg-stone-300' : 'bg-neutral-500'}`} />
                     ))}
                   </div>
                 )}
-                
-                {/* Backsplash base shadow depth onto countertop */}
-                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-neutral-950/45 blur-[0.5px]" />
               </div>
             )}
 
-            {/* 7. SINK ASSEMBLY & GOOSENECK FAUCET (Standing straight up out of Countertop) */}
+            {/* Left Wall Backsplash */}
+            {selection.backsplash !== 'none' && (
+              <div 
+                className="absolute w-[220px] h-[50px] border border-neutral-700/10 overflow-hidden shadow-sm transition-all duration-500"
+                style={{ 
+                  transform: 'translate3d(-228px, -27.5px, -20px) rotateY(90deg)',
+                  transformStyle: 'preserve-3d',
+                  backfaceVisibility: 'hidden'
+                }}
+              >
+                {selection.backsplash === 'full-slab' && (
+                  <div className={`absolute inset-0 ${selectedStone.bgStyle} opacity-95 transition-all duration-500`} />
+                )}
+                {selection.backsplash === 'subway' && (
+                  <div className="absolute inset-0 bg-neutral-100 transition-all duration-500 flex flex-wrap gap-[1px] p-0.5 justify-center content-start">
+                    {Array.from({ length: 40 }).map((_, i) => (
+                      <div key={i} className="w-6 h-3 bg-white border border-neutral-200 rounded-[0.5px]" />
+                    ))}
+                  </div>
+                )}
+                {selection.backsplash === 'mosaic' && (
+                  <div className="absolute inset-0 bg-neutral-800 transition-all duration-500 grid grid-cols-12 gap-[0.5px] p-0.5">
+                    {Array.from({ length: 50 }).map((_, i) => (
+                      <div key={i} className={`w-full h-1.5 rounded-[0.5px] ${i % 4 === 0 ? 'bg-amber-100/60' : i % 4 === 1 ? 'bg-stone-300' : 'bg-neutral-500'}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 3A. PASSAGE DOOR & CASING */}
             <div 
-              className="absolute w-[40px] h-[40px] z-20"
+              className="absolute w-[64px] h-[175px] bg-white border-2 border-zinc-300 shadow-md transition-all duration-500 rounded-sm"
               style={{ 
-                transform: 'translateZ(-95px) translateY(-28px) translateX(-20px) rotateX(-90deg)',
-                transformStyle: 'preserve-3d'
+                transform: 'translate3d(-192px, 2.5px, -129px)',
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden'
               }}
             >
-              {/* Gooseneck physical golden/brass faucet */}
-              <svg className="w-8 h-12 text-amber-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" viewBox="0 0 24 36" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                {/* Base collar */}
-                <path d="M 8 34 L 16 34" strokeWidth="3" />
-                <path d="M 12 34 L 12 20" strokeWidth="2" />
-                {/* Spout curve */}
-                <path d="M 12 20 Q 12 6 17 6 Q 22 6 22 14" fill="none" />
-                {/* Handles */}
-                <path d="M 6 30 L 10 30" strokeWidth="2" />
-                <path d="M 14 30 L 18 30" strokeWidth="2" />
-              </svg>
+              {/* Door frame / casing overlay */}
+              <div className="absolute inset-1 bg-zinc-50 border border-zinc-200 p-2 flex flex-col justify-between h-[171px]">
+                {/* 6 Elegant Panels */}
+                <div className="grid grid-cols-2 gap-2 h-full">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="border border-zinc-300/80 rounded-sm shadow-inner bg-zinc-100 flex items-center justify-center">
+                      <div className="w-[80%] h-[80%] border border-zinc-200 bg-white" />
+                    </div>
+                  ))}
+                </div>
+                {/* Brass Door Knob */}
+                <div 
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-600 border border-amber-600 shadow-md flex items-center justify-center"
+                  style={{ transform: 'translateZ(4px)' }}
+                >
+                  <div className="w-1 h-1 rounded-full bg-amber-200" />
+                </div>
+              </div>
             </div>
 
-            {/* 8. MAIN BACK COUNTERTOP SLAB (L-Shape Back Arm, laying horizontally) */}
+            {/* 3B. DOUBLE BIFOLD PANTRY DOORS */}
             <div 
-              className="absolute w-[270px] h-[60px] transition-all duration-500 z-10"
+              className="absolute w-[85px] h-[175px] bg-zinc-50 border-2 border-zinc-300 shadow-md transition-all duration-500 rounded-sm p-1.5 flex gap-1 justify-around"
               style={{ 
-                transform: 'rotateX(90deg) translateZ(-5px) translateX(-20px) translateY(-95px)',
+                transform: 'translate3d(-229px, 2.5px, -45px) rotateY(90deg)',
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden'
+              }}
+            >
+              {/* Door 1 */}
+              <div className="flex-1 border border-zinc-300 rounded flex flex-col justify-between p-1 bg-white">
+                <div className="w-full h-1/2 border border-zinc-200 rounded-xs bg-zinc-50" />
+                <div className="w-full h-[40%] border border-zinc-200 rounded-xs bg-zinc-50" />
+                {/* Handle */}
+                <div className="w-0.5 h-6 bg-zinc-400 rounded-xs self-end mt-2" />
+              </div>
+              {/* Door 2 */}
+              <div className="flex-1 border border-zinc-300 rounded flex flex-col justify-between p-1 bg-white">
+                <div className="w-full h-1/2 border border-zinc-200 rounded-xs bg-zinc-50" />
+                <div className="w-full h-[40%] border border-zinc-200 rounded-xs bg-zinc-50" />
+                {/* Handle */}
+                <div className="w-0.5 h-6 bg-zinc-400 rounded-xs self-start mt-2" />
+              </div>
+            </div>
+
+            {/* 4. BACK-LEFT COUNTER & BASE CABINETS */}
+            <div 
+              className="absolute w-[130px] h-[90px] transition-all duration-500"
+              style={{ 
+                transform: 'translate3d(-95px, 42.5px, -100px)',
                 transformStyle: 'preserve-3d'
               }}
             >
-              {/* TOP SLAB FACE */}
+              {/* Cabinet Base */}
               <div 
-                className={`absolute inset-0 rounded border border-white/10 overflow-hidden ${selectedStone.bgStyle} transition-all duration-500 shadow-[0_5px_15px_rgba(0,0,0,0.35)]`}
-                style={{ transform: 'translateZ(10px)' }}
+                className={`absolute inset-0 border border-zinc-200/40 p-1 flex justify-around shadow-md ${selectedCabinet.bgClass} rounded-b-sm`}
+                style={{ transform: 'translateZ(30px)', backfaceVisibility: 'hidden' }}
               >
-                {/* Stone vein highlight details */}
+                {/* Farmhouse sink front apron panel */}
+                {selection.sinkType === 'farmhouse' && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-7 bg-white border-b-2 border-stone-200 shadow-sm flex items-center justify-center rounded-b-sm z-10">
+                    <span className="text-[5px] text-zinc-400 font-mono tracking-widest uppercase">Fireclay Apron</span>
+                  </div>
+                )}
+                {/* 2 Cabinet Doors */}
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex-1 border border-current/10 rounded relative p-1 flex flex-col justify-between m-0.5">
+                    <div className="w-full h-1 border border-current/5" />
+                    <div className="w-1.5 h-4 bg-zinc-400 rounded-xs self-end shadow" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Countertop Slab */}
+              <div 
+                className={`absolute w-[130px] h-[60px] ${selectedStone.bgStyle} border border-white/10`}
+                style={{ transform: 'translate3d(0, -45px, 0) rotateX(90deg)', transformStyle: 'preserve-3d' }}
+              >
+                {/* Edge Lip Highlight */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/30 blur-[0.3px]" />
                 <div className="absolute inset-0 opacity-15 bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] bg-[length:24px_24px]" />
-                
-                {/* Interactive Sink Cutout */}
+
+                {/* Sink cutout / basin */}
                 {selection.sinkType !== 'none' && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 w-24 bg-neutral-950 rounded-md border border-neutral-700 flex flex-col items-center justify-center overflow-hidden">
-                    <div className="w-20 h-5 rounded bg-neutral-900 border-b border-neutral-800 flex items-center justify-center">
-                      <span className="text-[6px] text-neutral-400 font-mono tracking-tight uppercase">
-                        {selection.sinkType === 'undermount' ? 'Undermount Stainless' : selection.sinkType === 'farmhouse' ? 'Farmhouse Apron' : 'Slab Apron'}
-                      </span>
+                  <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-24 h-11 bg-zinc-800 border-2 border-zinc-600 rounded-sm shadow-inner flex p-0.5 justify-between">
+                    {/* Left Bowl */}
+                    <div className="w-[44px] h-full bg-zinc-900 border border-zinc-700 rounded-xs flex flex-col justify-end items-center pb-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
+                        <div className="w-0.5 h-0.5 rounded-full bg-zinc-700" />
+                      </div>
                     </div>
-                    {/* Tiny simulated water drain circle */}
-                    <div className="w-1 h-1 rounded-full bg-neutral-700/80 mt-0.5 border border-neutral-600 shadow-inner" />
+                    {/* Divider */}
+                    <div className="w-[2px] h-full bg-zinc-600 self-center" />
+                    {/* Right Bowl */}
+                    <div className="w-[44px] h-full bg-zinc-900 border border-zinc-700 rounded-xs flex flex-col justify-end items-center pb-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
+                        <div className="w-0.5 h-0.5 rounded-full bg-zinc-700" />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* FRONT LIP FACE (Thickness) */}
+              {/* Left Side (Blind Corner Connection to return) */}
               <div 
-                className={`absolute bottom-[-10px] left-0 right-0 h-[10px] border border-white/5 overflow-hidden ${selectedStone.bgStyle} filter brightness-75 transition-all duration-500`}
-                style={{ 
-                  transform: 'rotateX(-90deg) translateZ(55px)',
-                  transformOrigin: 'bottom'
-                }}
-              >
-                {/* Highlight edge strip */}
-                <div className="w-full h-[1.5px] bg-white/40 blur-[0.2px] animate-pulse" />
-              </div>
-
-              {/* RIGHT SIDE FACE (Thickness, ends at refrigerator) */}
-              <div 
-                className={`absolute top-0 bottom-0 right-[-10px] w-[10px] border border-white/5 overflow-hidden ${selectedStone.bgStyle} filter brightness-85 transition-all duration-500`}
-                style={{ 
-                  transform: 'rotateY(90deg) translateZ(265px)',
-                  transformOrigin: 'right'
-                }}
+                className={`absolute w-[60px] h-[90px] ${selectedCabinet.bgClass} filter brightness-75`}
+                style={{ transform: 'translateX(-65px) rotateY(90deg)' }}
               />
             </div>
 
-            {/* 9. MAIN BACK CABINETS (Underneath main countertop, containing dishwasher & shaker doors) */}
+            {/* 4B. LEFT UPPER CABINETS */}
             <div 
-              className="absolute w-[270px] h-[100px] transition-all duration-500"
+              className={`absolute w-[130px] h-[65px] border border-zinc-200/40 p-1 flex justify-around shadow-md ${selectedCabinet.bgClass}`}
               style={{ 
-                transform: 'translateZ(-95px) translateY(45px) translateX(-20px)',
-                transformStyle: 'preserve-3d'
+                transform: 'translate3d(-95px, -65px, -100px)',
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden'
               }}
             >
-              {/* CABINET FRONT FACE */}
-              <div 
-                className="absolute inset-0 rounded-b-lg border border-white/5 p-2 flex justify-between gap-3 shadow-2xl transition-all duration-500 bg-neutral-900/40"
-                style={{ transform: 'translateZ(35px)' }}
-              >
-                {/* 9A. INTEGRATED STAINLESS STEEL DISHWASHER (Left Side) */}
-                <div className="w-[70px] bg-gradient-to-b from-zinc-300 via-zinc-100 to-zinc-400 border border-zinc-400 rounded-sm p-1 flex flex-col justify-between relative shadow-md">
-                  {/* Dishwasher top panel screen */}
-                  <div className="h-4 bg-neutral-950 text-[5px] text-emerald-400 flex items-center justify-between px-1.5 border-b border-neutral-800 font-mono tracking-tighter">
-                    <span>⚡ CLEAN</span>
-                    <span className="animate-pulse">01:45</span>
-                  </div>
-                  {/* Dishwasher grab pull bar handle */}
-                  <div className="absolute top-6 left-1/2 -translate-x-1/2 w-12 h-2.5 bg-neutral-800 rounded border border-neutral-700 shadow flex items-center justify-center">
-                    <div className="w-8 h-0.5 bg-neutral-600 rounded" />
-                  </div>
-                  {/* Dishwasher status laser indicator (shines on floor) */}
-                  <div className="absolute bottom-1 right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_5px_#10b981] animate-pulse" />
+              {/* Doors with glass pane inserts for elite kitchen vibe! */}
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex-1 border border-current/10 rounded relative p-1 bg-current/5 flex flex-col justify-between m-0.5 shadow-sm">
+                  <div className="absolute inset-1 bg-sky-900/10 border border-current/5 rounded-xs" />
+                  <div className="w-1 h-3 bg-zinc-400 rounded-sm self-end z-10" />
                 </div>
-
-                {/* 9B. SINK CABINET DOORS (Center) */}
-                <div className={`flex-1 border border-white/5 rounded relative flex flex-col justify-between p-1 transition-all duration-500 ${selectedCabinet.bgClass}`}>
-                  
-                  {/* Farmhouse apron sink front cutout projection */}
-                  {selection.sinkType === 'farmhouse' ? (
-                    <div className="absolute top-0 inset-x-0 h-8 bg-white border-b border-stone-300 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)] rounded-t-sm flex items-center justify-center">
-                      <span className="text-[6px] text-zinc-400 font-mono font-bold tracking-widest uppercase">FIRECLAY APRON</span>
-                    </div>
-                  ) : null}
-
-                  <div className={`flex w-full h-full gap-1 mt-auto ${selection.sinkType === 'farmhouse' ? 'h-[44px]' : 'h-full'}`}>
-                    {/* Left Cabinet Door */}
-                    <div className="flex-1 border border-current/10 rounded relative flex flex-col justify-end p-1">
-                      <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-3.5 bg-amber-400 rounded-sm shadow-sm" />
-                    </div>
-                    {/* Right Cabinet Door */}
-                    <div className="flex-1 border border-current/10 rounded relative flex flex-col justify-end p-1">
-                      <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-3.5 bg-amber-400 rounded-sm shadow-sm" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 9C. DRAWER STACK (Right Side) */}
-                <div className={`w-[70px] border border-white/5 rounded relative flex flex-col justify-between p-1 transition-all duration-500 ${selectedCabinet.bgClass}`}>
-                  {/* Top drawer */}
-                  <div className="h-5 border border-current/10 rounded relative flex items-center justify-center">
-                    <div className="w-6 h-0.5 bg-amber-400 rounded" />
-                  </div>
-                  {/* Middle drawer */}
-                  <div className="h-5 border border-current/10 rounded relative flex items-center justify-center">
-                    <div className="w-6 h-0.5 bg-amber-400 rounded" />
-                  </div>
-                  {/* Bottom drawer */}
-                  <div className="h-5 border border-current/10 rounded relative flex items-center justify-center">
-                    <div className="w-6 h-0.5 bg-amber-400 rounded" />
-                  </div>
-                </div>
-
-              </div>
-
-              {/* CABINET RIGHT SIDE FACE (Closing up the line at the fridge) */}
-              <div 
-                className={`absolute top-0 bottom-0 right-[-30px] w-[30px] border-y border-white/5 filter brightness-75 transition-all duration-500 ${selectedCabinet.bgClass}`}
-                style={{ 
-                  transform: 'rotateY(90deg) translateZ(255px) translateX(-4px)',
-                  transformOrigin: 'right'
-                }}
-              />
+              ))}
             </div>
 
-            {/* 10. LEFT RETURN COUNTERTOP (The L-Wing stone surface extending forward) */}
+            {/* 4C. SLIDE-IN RANGE STOVE & OVEN */}
             <div 
-              className="absolute w-[60px] h-[130px] transition-all duration-500 z-10"
+              className="absolute w-[60px] h-[90px] transition-all duration-500"
               style={{ 
-                transform: 'rotateX(90deg) rotateZ(90deg) translateZ(-5px) translateY(120px) translateX(45px)',
+                transform: 'translate3d(0px, 42.5px, -98px)',
                 transformStyle: 'preserve-3d'
               }}
             >
-              {/* TOP SLAB FACE */}
+              {/* Front Face of Oven */}
               <div 
-                className={`absolute inset-0 rounded border border-white/10 overflow-hidden ${selectedStone.bgStyle} transition-all duration-500 shadow-[0_5px_15px_rgba(0,0,0,0.35)]`}
-                style={{ transform: 'translateZ(10px)' }}
+                className="absolute inset-0 bg-zinc-800 border-2 border-zinc-700 shadow-lg flex flex-col justify-between p-1.5 rounded-sm"
+                style={{ transform: 'translateZ(30px)', backfaceVisibility: 'hidden' }}
               >
-                {/* Stone vein highlight details */}
-                <div className="absolute inset-0 opacity-15 bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] bg-[length:24px_24px]" />
-              </div>
-
-              {/* OUTER EDGE PROFILE FACE (Facing the viewer directly!) */}
-              <div 
-                className={`absolute bottom-[-10px] left-0 right-0 h-[10px] border border-white/5 overflow-hidden ${selectedStone.bgStyle} filter brightness-75 transition-all duration-500`}
-                style={{ 
-                  transform: 'rotateX(-90deg) translateZ(125px)',
-                  transformOrigin: 'bottom'
-                }}
-              >
-                {/* Highlight edge strip */}
-                <div className="w-full h-[1.5px] bg-white/40 blur-[0.2px] animate-pulse" />
-              </div>
-            </div>
-
-            {/* 11. LEFT RETURN CABINETS (Underneath Left Return countertop, facing right) */}
-            <div 
-              className="absolute w-[130px] h-[100px] transition-all duration-500"
-              style={{ 
-                transform: 'rotateY(90deg) translateZ(-154px) translateY(45px) translateX(45px)',
-                transformStyle: 'preserve-3d'
-              }}
-            >
-              {/* CABINETS FACE */}
-              <div 
-                className={`absolute inset-0 border border-white/5 p-2 flex justify-between gap-2.5 shadow-2xl transition-all duration-500 ${selectedCabinet.bgClass}`}
-                style={{ transform: 'translateZ(30px)' }}
-              >
-                {/* Left Drawer Bay */}
-                <div className="flex-1 border border-current/10 rounded flex flex-col justify-around p-1">
-                  <div className="w-full h-4 border border-current/5 rounded flex items-center justify-center">
-                    <div className="w-4 h-0.5 bg-amber-400 rounded" />
+                {/* Stove Controls panel */}
+                <div className="w-full h-4 bg-zinc-900 border-b border-zinc-700 flex items-center justify-around px-1">
+                  <div className="w-3 h-2 bg-zinc-950 rounded-[1px] border border-zinc-800 flex items-center justify-center">
+                    <span className="text-[3px] text-amber-400 font-mono font-bold">350°</span>
                   </div>
-                  <div className="w-full h-8 border border-current/5 rounded relative flex items-center justify-center">
-                    <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1 h-3 bg-amber-400 rounded-sm shadow-sm" />
-                  </div>
-                </div>
-
-                {/* Right Luxury Oak Wine Rack Niche */}
-                <div className="w-14 h-[84px] bg-neutral-950/95 border border-neutral-800 rounded-md p-1 flex flex-col justify-around shadow-inner relative overflow-hidden">
-                  <span className="text-[5px] text-amber-500 font-bold uppercase tracking-wider text-center block leading-none mb-0.5">RESERVE</span>
-                  {/* Wine rack wood grid overlays */}
-                  <div className="grid grid-cols-2 grid-rows-3 gap-0.5 h-full">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <div key={i} className="border border-amber-900/30 bg-amber-900/10 rounded-sm flex items-center justify-center relative">
-                        {/* Tiny wine bottle caps */}
-                        <div className="w-1.5 h-1.5 rounded-full bg-red-900 shadow border border-amber-900/40" />
+                  {/* Dial knobs */}
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-zinc-400 border border-zinc-600 flex items-center justify-center">
+                        <div className="w-0.5 h-0.5 rounded-full bg-zinc-900" />
                       </div>
                     ))}
                   </div>
                 </div>
+                {/* Glass Oven Window */}
+                <div className="flex-1 bg-zinc-950 border border-zinc-700 rounded-sm mt-1 mb-1.5 p-1 flex items-center justify-center relative shadow-inner">
+                  <div className="absolute top-1 bottom-1 left-2 right-2 bg-amber-500/10 border border-amber-600/20 rounded-xs flex items-center justify-center">
+                    <span className="text-[3px] text-amber-500/40 font-mono">Bake Active</span>
+                  </div>
+                </div>
+                {/* Stainless steel door handle */}
+                <div className="w-10 h-1 bg-zinc-300 rounded shadow self-center" />
               </div>
-              
-              {/* Toe Kick shadow overlay */}
+
+              {/* Glass Cooktop slab */}
               <div 
-                className="absolute bottom-[-10px] left-3 right-3 h-2 bg-neutral-950/50 rounded-full blur-[1.5px]"
-                style={{ transform: 'translateZ(5px)' }}
-              />
+                className="absolute w-[60px] h-[60px] bg-zinc-900 border border-zinc-700 flex flex-wrap gap-2 p-2 justify-center content-center"
+                style={{ transform: 'translate3d(0, -45px, 0) rotateX(90deg)' }}
+              >
+                {/* 4 Stove burner rings */}
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className={`w-4 h-4 rounded-full border border-zinc-700 flex items-center justify-center ${i === 0 ? 'bg-red-500/20 border-red-500' : 'bg-black'}`}>
+                    <div className={`w-2 h-2 rounded-full border border-zinc-800 ${i === 0 ? 'bg-red-500/40' : ''}`} />
+                  </div>
+                ))}
+              </div>
             </div>
-            
+
+            {/* 4D. OVER-THE-RANGE MICROWAVE & RANGE HOOD */}
+            <div 
+              className="absolute w-[60px] h-[40px] bg-zinc-800 border border-zinc-700 shadow-md transition-all duration-500 flex flex-col justify-between rounded-sm"
+              style={{ 
+                transform: 'translate3d(0px, -52.5px, -100px)',
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden'
+              }}
+            >
+              {/* Front Face with panel and door */}
+              <div className="absolute inset-0 bg-zinc-900 border border-zinc-700 flex p-1 justify-between h-[38px]">
+                {/* Microwave door glass */}
+                <div className="w-[70%] h-full bg-zinc-950 border border-zinc-800 rounded-sm p-1 relative shadow-inner">
+                  <div className="absolute top-1 bottom-1 left-1.5 right-1.5 bg-yellow-400/5 border border-yellow-500/10 rounded-xs" />
+                </div>
+                {/* Keypad & digital display */}
+                <div className="w-[25%] h-full bg-zinc-950 border border-zinc-800 rounded-sm p-0.5 flex flex-col justify-between items-center font-mono">
+                  <span className="text-[3px] text-emerald-400 font-bold leading-none">12:30</span>
+                  <div className="grid grid-cols-2 gap-[1px] w-full mt-0.5">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <div key={i} className="h-1 bg-zinc-800 rounded-[0.5px]" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4E. BACK-RIGHT COUNTER & BASE CABINET */}
+            <div 
+              className="absolute w-[80px] h-[90px] transition-all duration-500"
+              style={{ 
+                transform: 'translate3d(70px, 42.5px, -100px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              {/* Shaker cabinet base */}
+              <div 
+                className={`absolute inset-0 border border-zinc-200/40 p-1 flex justify-around shadow-md ${selectedCabinet.bgClass} rounded-b-sm`}
+                style={{ transform: 'translateZ(30px)', backfaceVisibility: 'hidden' }}
+              >
+                {/* Shaker Door + Drawers */}
+                <div className="flex-1 border border-current/10 rounded relative p-1 flex flex-col justify-between m-0.5">
+                  <div className="w-full h-1 border border-current/5" />
+                  <div className="w-1.5 h-4 bg-zinc-400 rounded-xs self-start shadow" />
+                </div>
+                <div className="flex-1 border border-current/10 rounded relative p-1 flex flex-col justify-between m-0.5">
+                  <span className="text-[3px] font-mono opacity-40">DRAWERS</span>
+                  <div className="w-full h-0.5 bg-zinc-400 rounded-xs" />
+                  <div className="w-full h-0.5 bg-zinc-400 rounded-xs" />
+                </div>
+              </div>
+
+              {/* Countertop slab */}
+              <div 
+                className={`absolute w-[80px] h-[60px] ${selectedStone.bgStyle} border border-white/10`}
+                style={{ transform: 'translate3d(0, -45px, 0) rotateX(90deg)' }}
+              >
+                {/* Edge Lip Highlight */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/30 blur-[0.3px]" />
+                <div className="absolute inset-0 opacity-15 bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] bg-[length:24px_24px]" />
+              </div>
+            </div>
+
+            {/* 4F. RIGHT UPPER CABINETS */}
+            <div 
+              className={`absolute w-[80px] h-[65px] border border-zinc-200/40 p-1 flex justify-around shadow-md ${selectedCabinet.bgClass}`}
+              style={{ 
+                transform: 'translate3d(70px, -65px, -100px)',
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden'
+              }}
+            >
+              {/* Shaker upper doors */}
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex-1 border border-current/10 rounded relative p-1 bg-current/5 flex flex-col justify-between m-0.5 shadow-sm">
+                  <div className="absolute inset-1 bg-sky-900/5 border border-current/5 rounded-xs" />
+                  <div className="w-1 h-3 bg-zinc-400 rounded-sm self-end z-10" />
+                </div>
+              ))}
+            </div>
+
+            {/* 5. L-SHAPE: Left Return Section (width = 60px, depth = 160px) */}
+            <div 
+              className="absolute w-[60px] h-[90px] transition-all duration-500"
+              style={{ 
+                transform: 'translate3d(-200px, 42.5px, -50px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              {/* Top slab of Left Return */}
+              <div 
+                className={`absolute w-[60px] h-[160px] ${selectedStone.bgStyle} border border-white/10`}
+                style={{ transform: 'translate3d(0, -45px, 0) rotateX(90deg)' }}
+              >
+                <div className="absolute inset-0 opacity-15 bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] bg-[length:24px_24px]" />
+                
+                {/* Edge Lip highlights on exposed front and right edges */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/30 blur-[0.3px]" />
+                <div className="absolute top-0 bottom-0 right-0 w-1 bg-white/20 blur-[0.3px]" />
+              </div>
+
+              {/* Cabinet Front Face (Facing right, inside the room) */}
+              <div 
+                className={`absolute w-[160px] h-[90px] border border-zinc-200/40 p-1.5 flex justify-around shadow-md ${selectedCabinet.bgClass}`}
+                style={{ 
+                  transform: 'translateX(30px) rotateY(90deg)', 
+                  backfaceVisibility: 'hidden' 
+                }}
+              >
+                {/* Return drawer stacks & shaker door */}
+                <div className="flex-1 border border-current/10 rounded relative p-1 flex flex-col justify-between m-0.5">
+                  <span className="text-[3px] font-mono opacity-40">DRAWERS</span>
+                  <div className="w-6 h-0.5 bg-zinc-400 rounded self-center" />
+                  <div className="w-6 h-0.5 bg-zinc-400 rounded self-center" />
+                </div>
+                <div className="flex-1 border border-current/10 rounded relative p-1 flex flex-col justify-between m-0.5">
+                  <div className="w-full h-1 border border-current/5" />
+                  <div className="w-1 h-3.5 bg-zinc-400 rounded-sm self-start" />
+                </div>
+              </div>
+
+              {/* Front vertical end face (facing the viewer at Z = +80px) */}
+              <div 
+                className={`absolute inset-x-0 bottom-0 h-[90px] border border-zinc-200/40 p-1 ${selectedCabinet.bgClass} filter brightness-95`}
+                style={{ 
+                  transform: 'translateZ(80px)', 
+                  backfaceVisibility: 'hidden' 
+                }}
+              >
+                <div className="w-full h-full border border-current/10 rounded flex items-center justify-center p-1">
+                  <span className="text-[4px] font-mono tracking-wider opacity-30 text-center uppercase">Innovation Slabs</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3D Gooseneck Faucet */}
+            {selection.sinkType !== 'none' && (
+              <div 
+                className="absolute w-[30px] h-[30px] z-40"
+                style={{ 
+                  transform: 'translate3d(-95px, -2.5px, -100px) rotateX(-90deg)',
+                  transformStyle: 'preserve-3d'
+                }}
+              >
+                {/* Chrome Faucet Plane 1 */}
+                <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: 'rotateY(0deg)' }}>
+                  <svg className="w-6 h-10 text-zinc-300 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" viewBox="0 0 24 36" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M 12 34 L 12 16" strokeWidth="2.5" stroke="currentColor" />
+                    <path d="M 12 16 Q 12 4 17 4 Q 22 4 22 10" fill="none" stroke="currentColor" />
+                    <path d="M 10 32 L 14 32" strokeWidth="2" stroke="currentColor" />
+                  </svg>
+                </div>
+                {/* Chrome Faucet Plane 2 */}
+                <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: 'rotateY(90deg)' }}>
+                  <svg className="w-6 h-10 text-zinc-300 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" viewBox="0 0 24 36" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M 12 34 L 12 16" strokeWidth="2.5" stroke="currentColor" />
+                    <path d="M 12 16 Q 12 4 17 4 Q 22 4 22 10" fill="none" stroke="currentColor" />
+                    <path d="M 10 32 L 14 32" strokeWidth="2" stroke="currentColor" />
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {/* 5C. TALL FRENCH-DOOR REFRIGERATOR & UPPER CABINET */}
+            <div 
+              className="absolute w-[80px] h-[155px] transition-all duration-500"
+              style={{ 
+                transform: 'translate3d(150px, 10px, -95px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              {/* Refrigerator Front Face */}
+              <div 
+                className="absolute inset-0 bg-gradient-to-r from-neutral-800 via-neutral-900 to-neutral-950 border border-neutral-900 shadow-2xl rounded-t flex flex-col justify-between p-2"
+                style={{ 
+                  transform: 'translateZ(35px)',
+                  transformStyle: 'preserve-3d',
+                  backfaceVisibility: 'hidden'
+                }}
+              >
+                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-neutral-700/50" />
+                <div className="absolute right-[42px] top-16 w-0.5 h-12 bg-zinc-300 rounded-xs shadow" />
+                <div className="absolute left-[42px] top-16 w-0.5 h-12 bg-zinc-300 rounded-xs shadow" />
+                <div className="absolute left-3 top-10 w-[20px] h-8 bg-neutral-950 border border-neutral-800 rounded p-0.5 shadow-inner flex flex-col justify-between items-center">
+                  <div className="w-full h-1.5 bg-sky-900/40 rounded-[0.5px]" />
+                  <div className="w-3 h-3 bg-neutral-900 rounded-[1px] flex items-center justify-center">
+                    <div className="w-[1px] h-1.5 bg-zinc-500 rounded-full" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-12 border-t border-neutral-850 bg-gradient-to-b from-neutral-900 to-neutral-950 flex items-start justify-center pt-2">
+                  <div className="w-12 h-0.5 bg-zinc-300 rounded-xs shadow" />
+                </div>
+              </div>
+
+              {/* Side Faces for 3D Refrigerator Volume */}
+              <div 
+                className="absolute top-0 bottom-0 w-[70px] bg-neutral-900 border border-neutral-950 filter brightness-75"
+                style={{ left: '50%', marginLeft: '-35px', transform: 'translateX(-40px) rotateY(-90deg)', backfaceVisibility: 'hidden' }}
+              />
+              <div 
+                className="absolute top-0 bottom-0 w-[70px] bg-neutral-900 border border-neutral-950 filter brightness-90"
+                style={{ left: '50%', marginLeft: '-35px', transform: 'translateX(40px) rotateY(90deg)', backfaceVisibility: 'hidden' }}
+              />
+              <div 
+                className="absolute left-0 right-0 h-[70px] bg-neutral-900 border border-neutral-950"
+                style={{ top: '50%', marginTop: '-35px', transform: 'translateY(-77.5px) rotateX(90deg)', backfaceVisibility: 'hidden' }}
+              />
+
+              {/* 5D. SHAKER CABINETS ON TOP OF THE FRIDGE */}
+              <div 
+                className={`absolute w-[80px] h-[22px] border border-zinc-200/40 p-0.5 flex justify-around shadow-sm ${selectedCabinet.bgClass}`}
+                style={{ 
+                  transform: 'translate3d(0, -88px, 0)',
+                  transformStyle: 'preserve-3d',
+                  backfaceVisibility: 'hidden'
+                }}
+              >
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex-1 border border-current/10 rounded relative flex flex-col justify-end p-0.5 m-0.5">
+                    <div className="w-2.5 h-0.5 bg-zinc-400 rounded-xs" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 6. DOUBLE ISLAND SYSTEM WITH BOOKMATCHED WATERFALL EDGES */}
+            {/* Segment 1: Main Prep Island with Drawers and Dual Waterfall Slabs */}
+            <div 
+              className="absolute w-[120px] h-[90px] transition-all duration-500"
+              style={{ 
+                transform: 'translate3d(-40px, 42.5px, 35px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              {/* Cabinet Base Block */}
+              <div 
+                className={`absolute inset-x-2 inset-y-0 border border-zinc-200/40 p-1 flex shadow-md ${selectedCabinet.bgClass} rounded-sm`}
+                style={{ transform: 'translateZ(30px)', backfaceVisibility: 'hidden' }}
+              >
+                {/* Shaker panels and luxury brass pulls */}
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex-1 border border-current/10 rounded relative p-1.5 flex flex-col justify-between m-0.5">
+                    <span className="text-[3px] font-mono opacity-30">DRAWER</span>
+                    <div className="w-8 h-1 bg-amber-600 rounded-sm self-center shadow" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Top Countertop Slab */}
+              <div 
+                className={`absolute w-[120px] h-[70px] ${selectedStone.bgStyle} border border-white/15`}
+                style={{ transform: 'translate3d(0, -45px, 0) rotateX(90deg)', transformStyle: 'preserve-3d' }}
+              >
+                {/* Edge Highlights */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/40 blur-[0.2px]" />
+                <div className="absolute top-0 bottom-0 left-0 w-1 bg-white/30 blur-[0.2px]" />
+                <div className="absolute top-0 bottom-0 right-0 w-1 bg-white/30 blur-[0.2px]" />
+                <div className="absolute inset-0 opacity-15 bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] bg-[length:24px_24px]" />
+              </div>
+
+              {/* Left Bookmatched Waterfall Slab (Goes to Floor) */}
+              <div 
+                className={`absolute w-[70px] h-[90px] ${selectedStone.bgStyle} border border-white/10`}
+                style={{ 
+                  transform: 'translateX(-60px) rotateY(-90deg)', 
+                  transformStyle: 'preserve-3d', 
+                  backfaceVisibility: 'hidden' 
+                }}
+              >
+                <div className="absolute top-0 bottom-0 left-0 w-1 bg-white/30 blur-[0.2px]" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 blur-[0.2px]" />
+              </div>
+
+              {/* Right Bookmatched Waterfall Slab (Goes to Floor) */}
+              <div 
+                className={`absolute w-[70px] h-[90px] ${selectedStone.bgStyle} border border-white/10`}
+                style={{ 
+                  transform: 'translateX(60px) rotateY(90deg)', 
+                  transformStyle: 'preserve-3d', 
+                  backfaceVisibility: 'hidden' 
+                }}
+              >
+                <div className="absolute top-0 bottom-0 right-0 w-1 bg-white/30 blur-[0.2px]" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 blur-[0.2px]" />
+              </div>
+            </div>
+
+            {/* Segment 2: Angled Breakfast Bar overhang with Waterfall end & Bar Stools */}
+            <div 
+              className="absolute w-[100px] h-[90px] transition-all duration-500"
+              style={{ 
+                transform: 'translate3d(70px, 42.5px, 45px) rotateY(-15deg)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              {/* Top Overhang Stone Slab (Thin cantilevered slice) */}
+              <div 
+                className={`absolute w-[100px] h-[70px] ${selectedStone.bgStyle} border border-white/15`}
+                style={{ transform: 'translate3d(0, -45px, 0) rotateX(90deg)', transformStyle: 'preserve-3d' }}
+              >
+                {/* Edge highlights */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/40 blur-[0.2px]" />
+                <div className="absolute top-0 bottom-0 right-0 w-1 bg-white/30 blur-[0.2px]" />
+                <div className="absolute inset-0 opacity-15 bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] bg-[length:24px_24px]" />
+              </div>
+
+              {/* Right Waterfall end slab (Goes to Floor) */}
+              <div 
+                className={`absolute w-[70px] h-[90px] ${selectedStone.bgStyle} border border-white/10`}
+                style={{ 
+                  transform: 'translateX(50px) rotateY(90deg)', 
+                  transformStyle: 'preserve-3d', 
+                  backfaceVisibility: 'hidden' 
+                }}
+              >
+                <div className="absolute top-0 bottom-0 right-0 w-1 bg-white/30 blur-[0.2px]" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 blur-[0.2px]" />
+              </div>
+
+              {/* Support pillars underneath cantilever */}
+              <div className="absolute left-2 bottom-0 w-3 h-[90px] bg-neutral-800 border border-neutral-700 rounded-sm" />
+              
+              {/* Minimalist 3D Bar Stools */}
+              <div 
+                className="absolute w-[24px] h-[52px] transition-all duration-500"
+                style={{ transform: 'translate3d(-20px, 38px, 15px) rotateY(15deg)', transformStyle: 'preserve-3d' }}
+              >
+                {/* Wooden Seat */}
+                <div className="absolute top-0 w-[24px] h-[24px] bg-amber-800 rounded-md border border-amber-900 shadow flex items-center justify-center" style={{ transform: 'rotateX(90deg)' }}>
+                  <div className="w-[18px] h-[18px] border border-amber-700/40 rounded-xs" />
+                </div>
+                {/* Metal legs */}
+                <div className="absolute top-1 bottom-0 left-1 w-0.5 bg-neutral-700" />
+                <div className="absolute top-1 bottom-0 right-1 w-0.5 bg-neutral-700" />
+                <div className="absolute top-1 bottom-0 left-1 w-0.5 bg-neutral-700" style={{ transform: 'translateZ(18px)' }} />
+                <div className="absolute top-1 bottom-0 right-1 w-0.5 bg-neutral-700" style={{ transform: 'translateZ(18px)' }} />
+              </div>
+
+              <div 
+                className="absolute w-[24px] h-[52px] transition-all duration-500"
+                style={{ transform: 'translate3d(15px, 38px, 15px) rotateY(15deg)', transformStyle: 'preserve-3d' }}
+              >
+                {/* Wooden Seat */}
+                <div className="absolute top-0 w-[24px] h-[24px] bg-amber-800 rounded-md border border-amber-900 shadow flex items-center justify-center" style={{ transform: 'rotateX(90deg)' }}>
+                  <div className="w-[18px] h-[18px] border border-amber-700/40 rounded-xs" />
+                </div>
+                {/* Metal legs */}
+                <div className="absolute top-1 bottom-0 left-1 w-0.5 bg-neutral-700" />
+                <div className="absolute top-1 bottom-0 right-1 w-0.5 bg-neutral-700" />
+                <div className="absolute top-1 bottom-0 left-1 w-0.5 bg-neutral-700" style={{ transform: 'translateZ(18px)' }} />
+                <div className="absolute top-1 bottom-0 right-1 w-0.5 bg-neutral-700" style={{ transform: 'translateZ(18px)' }} />
+              </div>
+            </div>
           </div>
         </div>
 

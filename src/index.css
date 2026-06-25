@@ -5,6 +5,44 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom luxury Navy Blue palette overrides for all dark/slate neutral elements */
+  --color-neutral-50: #f4f6f9;
+  --color-neutral-100: #e9ecf3;
+  --color-neutral-200: #cbd5e7;
+  --color-neutral-300: #9cb1d6;
+  --color-neutral-400: #6786bf;
+  --color-neutral-500: #4265a7;
+  --color-neutral-600: #334e89;
+  --color-neutral-700: #293d6e;
+  --color-neutral-800: #1b284c;
+  --color-neutral-850: #121e3c;
+  --color-neutral-900: #0a1128;
+  --color-neutral-950: #050814;
+
+  /* Custom radiant Gold palette overrides for all orange/amber accent elements */
+  --color-amber-50: #fcfbf6;
+  --color-amber-100: #f9f0da;
+  --color-amber-200: #f1dfbc;
+  --color-amber-300: #e6cb95;
+  --color-amber-400: #dbb367;
+  --color-amber-500: #c59b27;
+  --color-amber-600: #aa811e;
+  --color-amber-700: #8d6718;
+  --color-amber-800: #715013;
+  --color-amber-900: #583d0f;
+  --color-amber-950: #322106;
+
+  /* Explicit theme aliases */
+  --color-navy-50: #f4f6f9;
+  --color-navy-100: #e9ecf3;
+  --color-navy-500: #4265a7;
+  --color-navy-900: #0a1128;
+  --color-navy-950: #050814;
+
+  --color-gold-400: #dbb367;
+  --color-gold-500: #c59b27;
+  --color-gold-600: #aa811e;
 }
 
 @keyframes shimmer {

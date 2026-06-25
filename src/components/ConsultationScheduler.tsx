@@ -1,6 +1,8 @@
 import { useState, FormEvent, DragEvent, ChangeEvent } from 'react';
 import { ConsultationRequest, EstimatorInputs, EstimateBreakdown, UploadedFile } from '../types';
 import { Calendar, Clock, MapPin, Sparkles, Send, CheckCircle, Info, Hammer, PhoneCall, Upload, X, FileText, Image as ImageIcon, Ruler, Folder } from 'lucide-react';
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 interface ConsultationSchedulerProps {
   appliedInputs?: EstimatorInputs;
@@ -107,17 +109,40 @@ export default function ConsultationScheduler({ appliedInputs, appliedBreakdown,
     };
 
     try {
-      const response = await fetch('/api/consultations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      // 1. Prepare firestore record matching the ConsultationRequest schema
+      const docPayload = {
+        fullName: payload.fullName,
+        email: payload.email,
+        phone: payload.phone,
+        zipCode: payload.zipCode || "32801",
+        projectType: payload.projectType,
+        scope: payload.scope,
+        preferredMaterial: payload.preferredMaterial,
+        budgetRange: payload.budgetRange,
+        timeline: payload.timeline,
+        message: payload.message,
+        date: payload.date,
+        timeSlot: payload.timeSlot,
+        status: 'Pending',
+        createdAt: new Date().toISOString(),
+        uploadedFiles: payload.uploadedFiles || []
+      };
 
-      if (!response.ok) {
-        throw new Error("Failed to register consultation. Please check your network connection.");
+      // 2. Try POSTing to local express backend API
+      try {
+        await fetch('/api/consultations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch (apiErr) {
+        console.warn("Express API unreachable. Operating in standalone serverless mode.", apiErr);
       }
+
+      // 3. Write directly to Firestore to ensure durable delivery on GitHub Pages or standalone deploy
+      await addDoc(collection(db, 'consultations'), docPayload);
 
       setIsSuccess(true);
       onSubmitSuccess();

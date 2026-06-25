@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global safety net - Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Global Security Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == "xabdieldiaz2010@gmail.com";
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- Contractors Rules ---
+    match /contractors/{contractorId} {
+      // Anyone signed in can read their own profile. Admin can read all profiles.
+      allow get: if isSignedIn() && (isOwner(contractorId) || isAdmin());
+      allow list: if isAdmin();
+      
+      // Creating a contractor profile:
+      // Users can submit their own profile on signup but MUST be created with approved = false.
+      // This prevents identity spoofing and privilege escalation.
+      allow create: if isSignedIn() && isOwner(contractorId) && 
+                    request.resource.data.approved == false && 
+                    request.resource.data.email == request.auth.token.email;
+                    
+      // Changing contractor permissions:
+      // Only the verified admin email can change any contractor permissions (update/delete).
+      allow update, delete: if isAdmin();
+    }
+
+    // --- Consultations Rules ---
+    match /consultations/{consultationId} {
+      // Anyone can create a consultation lead (when registering/booking a project online).
+      allow create: if true;
+      
+      // Reading or managing homeowner leads:
+      // Only the verified administrator OR approved contractors are permitted.
+      allow read, write: if isAdmin() || (
+        isSignedIn() && 
+        exists(/databases/$(database)/documents/contractors/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/contractors/$(request.auth.uid)).data.approved == true
+      );
+    }
+  }
+}

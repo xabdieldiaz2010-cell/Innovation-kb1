@@ -20,7 +20,7 @@ const SLIDER_PROJECTS: SliderProject[] = [
     afterLabel: 'AFTER: IKB Custom Calacatta Gold Quartz',
     beforeDesc: 'Cluttered, light-starved kitchen with yellowing oak cabinets and chipped, moisture-swollen laminate counters.',
     afterDesc: 'Slab-matched Calacatta Gold quartz countertops, bookmatched waterfall island corners, and floor-to-ceiling white custom shaker cabinets.',
-    image: '/src/assets/images/ogc_hero_kitchen_1782306639623.jpg'
+    image: 'images/ogc_hero_kitchen_1782306639623.jpg'
   },
   {
     id: 'bathroom',
@@ -29,7 +29,7 @@ const SLIDER_PROJECTS: SliderProject[] = [
     afterLabel: 'AFTER: IKB Polished Statuario Porcelain Slabs',
     beforeDesc: 'Mildew-prone tile grout lines, leaky ceramic fixtures, and restricted vanity storage.',
     afterDesc: 'Bookmatched Spanish Porcelain cladding, custom hand-polished ramp sinks, floating dark oak cabinetry, and frameless custom LED mirrors.',
-    image: '/src/assets/images/ogc_hero_bathroom_1782306655535.jpg'
+    image: 'images/ogc_hero_bathroom_1782306655535.jpg'
   },
   {
     id: 'lobby',
@@ -37,8 +37,8 @@ const SLIDER_PROJECTS: SliderProject[] = [
     beforeLabel: 'BEFORE: Heavy Drywall & Worn Veneer Counter',
     afterLabel: 'AFTER: IKB Polished Statuario White Cladding',
     beforeDesc: 'Scuffed walnut-colored plastic veneer with dated curves and exposed cables.',
-    afterDesc: 'Monolithic reception deck wrapped in continuous seamless porcelain slabs, reinforced with aluminum honeycomb, paired with modern oak features.',
-    image: '/src/assets/images/ogc_commercial_lobby_1782306668882.jpg'
+    afterDesc: 'Monolithic reception desk wrapped in continuous seamless porcelain slabs, reinforced with aluminum honeycomb, paired with modern oak features.',
+    image: 'images/ogc_commercial_lobby_1782306668882.jpg'
   }
 ];
 
@@ -51,6 +51,33 @@ export default function BeforeAfterSlider({ onNavigate }: BeforeAfterSliderProps
   const [sliderPos, setSliderPos] = useState<number>(50); // percentage 0-100
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  // Handle responsive size updates
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        setDimensions({
+          width: containerRef.current.offsetWidth,
+          height: containerRef.current.offsetHeight
+        });
+      }
+    };
+
+    updateDimensions();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateDimensions();
+    });
+    resizeObserver.observe(containerRef.current);
+
+    window.addEventListener('resize', updateDimensions);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
 
   // Set position based on click or drag
   const handleMove = (clientX: number) => {
@@ -157,7 +184,10 @@ export default function BeforeAfterSlider({ onNavigate }: BeforeAfterSliderProps
               />
               
               {/* After label */}
-              <div className="absolute right-4 bottom-4 bg-neutral-950/80 backdrop-blur-sm border border-neutral-800 text-amber-400 font-mono text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-lg z-10 select-none pointer-events-none uppercase tracking-wider">
+              <div 
+                className="absolute right-4 bottom-4 bg-neutral-950/80 backdrop-blur-sm border border-neutral-800 text-amber-400 font-mono text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-lg z-10 select-none pointer-events-none uppercase tracking-wider transition-all duration-200"
+                style={{ opacity: Math.max(0, Math.min(1, (80 - sliderPos) / 20)) }}
+              >
                 {activeProj.afterLabel}
               </div>
             </div>
@@ -172,15 +202,18 @@ export default function BeforeAfterSlider({ onNavigate }: BeforeAfterSliderProps
                 src={activeProj.image} 
                 alt="Original kitchen bathroom before remodel"
                 referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover max-w-none grayscale sepia brightness-50 contrast-125 saturate-50 blur-[1px]"
-                style={{ width: containerRef.current?.offsetWidth || '100%', height: containerRef.current?.offsetHeight || '100%' }}
+                className="absolute inset-0 object-cover max-w-none grayscale sepia brightness-50 contrast-125 saturate-50 blur-[1px]"
+                style={{ width: dimensions.width || '100%', height: dimensions.height || '100%' }}
               />
 
               {/* Distressing texture overlay to look older/vintage */}
               <div className="absolute inset-0 bg-yellow-900/10 mix-blend-color-burn" />
 
               {/* Before label */}
-              <div className="absolute left-4 bottom-4 bg-red-950/85 backdrop-blur-sm border border-red-900/50 text-white font-mono text-[10px] font-medium px-3 py-1.5 rounded-lg shadow-lg z-10 select-none pointer-events-none uppercase tracking-wider">
+              <div 
+                className="absolute left-4 bottom-4 bg-red-950/85 backdrop-blur-sm border border-red-900/50 text-white font-mono text-[10px] font-medium px-3 py-1.5 rounded-lg shadow-lg z-10 select-none pointer-events-none uppercase tracking-wider transition-all duration-200"
+                style={{ opacity: Math.max(0, Math.min(1, (sliderPos - 20) / 20)) }}
+              >
                 {activeProj.beforeLabel}
               </div>
             </div>

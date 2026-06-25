@@ -1,0 +1,72 @@
+{
+  "entities": {
+    "Contractor": {
+      "title": "Contractor Profile",
+      "description": "Represents a contractor who has requested access to the Innovation Kitchen and Bath leads ledger.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "The contractor's registered email address."
+        },
+        "approved": {
+          "type": "boolean",
+          "description": "Whether the contractor is approved by the admin to view and edit leads."
+        },
+        "requestedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the access request was submitted."
+        },
+        "approvedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the admin approved access."
+        },
+        "approvedBy": {
+          "type": "string",
+          "description": "Email of the admin who approved access."
+        }
+      },
+      "required": ["email", "approved", "requestedAt"]
+    },
+    "Consultation": {
+      "title": "Homeowner Consultation Lead",
+      "description": "Represents an incoming project lead submitted by a Central Florida homeowner.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "zipCode": { "type": "string" },
+        "projectType": { "type": "string" },
+        "scope": { "type": "string" },
+        "preferredMaterial": { "type": "string" },
+        "budgetRange": { "type": "string" },
+        "timeline": { "type": "string" },
+        "message": { "type": "string" },
+        "date": { "type": "string" },
+        "timeSlot": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["Pending", "Confirmed", "Completed"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["fullName", "email", "phone", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/contractors/{contractorId}": {
+      "schema": "Contractor",
+      "description": "Secured profiles of contractors and partners requesting access."
+    },
+    "/consultations/{consultationId}": {
+      "schema": "Consultation",
+      "description": "Central Florida kitchen & bath project leads and booked consultations."
+    }
+  }
+}

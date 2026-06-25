@@ -21,28 +21,160 @@ import {
   ChevronRight, 
   CheckCircle,
   Gem,
-  Image
+  Image,
+  Mail,
+  Facebook,
+  Instagram,
+  Lock,
+  LogIn,
+  LogOut
 } from 'lucide-react';
+import { auth } from './firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from './firebase';
 import MaterialCatalog from './components/MaterialCatalog';
 import CountertopCustomizer from './components/CountertopCustomizer';
 import BudgetEstimator from './components/BudgetEstimator';
 import AiDesignAssistant from './components/AiDesignAssistant';
 import ConsultationScheduler from './components/ConsultationScheduler';
 import AdminPortal from './components/AdminPortal';
+import ContractorLogin from './components/ContractorLogin';
 import AboutUs from './components/AboutUs';
 import ProjectGallery from './components/ProjectGallery';
 import BeforeAfterSlider from './components/BeforeAfterSlider';
 import ServiceAreas from './components/ServiceAreas';
 import { Stone, CustomizerSelection, EstimatorInputs, EstimateBreakdown } from './types';
+import { Helmet } from './components/Helmet';
 
 // Images we generated dynamically
-const HERO_KITCHEN = "/src/assets/images/ogc_hero_kitchen_1782306639623.jpg";
-const HERO_BATHROOM = "/src/assets/images/ogc_hero_bathroom_1782306655535.jpg";
-const HERO_COMM_LOBBY = "/src/assets/images/ogc_commercial_lobby_1782306668882.jpg";
+const HERO_KITCHEN = "images/ogc_hero_kitchen_1782306639623.jpg";
+const HERO_BATHROOM = "images/ogc_hero_bathroom_1782306655535.jpg";
+const HERO_COMM_LOBBY = "images/ogc_commercial_lobby_1782306668882.jpg";
+
+export function InnovationLogo({ className = "h-11 w-auto" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 380 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Logo Outline Frame */}
+      <path 
+        d="M 194,56 L 194,22 L 328,22 L 328,118 L 261,118" 
+        stroke="#595959" 
+        strokeWidth="2.8" 
+        strokeLinecap="square" 
+        strokeLinejoin="miter" 
+        fill="none" 
+      />
+      
+      {/* "INNOVATION" Text - Gray Serif font matching user logo */}
+      <text 
+        x="190" 
+        y="72" 
+        textAnchor="middle" 
+        fill="#555555" 
+        fontSize="31" 
+        fontFamily="'Playfair Display', 'Georgia', 'Times New Roman', serif" 
+        fontWeight="600" 
+        letterSpacing="1.2"
+      >
+        INNOVATION
+      </text>
+      
+      {/* "KITCHEN & BATH" Text - Royal Blue Serif font matching user logo */}
+      <text 
+        x="190" 
+        y="104" 
+        textAnchor="middle" 
+        fill="#0e4ab5" 
+        fontSize="17.5" 
+        fontFamily="'Playfair Display', 'Georgia', 'Times New Roman', serif" 
+        fontWeight="700" 
+        letterSpacing="4.5"
+      >
+        KITCHEN & BATH
+      </text>
+    </svg>
+  );
+}
+
+const SEO_METADATA: Record<string, { title: string; description: string }> = {
+  showroom: {
+    title: "Innovation Kitchen & Bath | Premium Countertops & Cabinets Orlando",
+    description: "Innovation Kitchen & Bath (IKB) specializes in premium quartz, granite, quartzite, and porcelain countertops and custom cabinet fabrication in Central Florida."
+  },
+  gallery: {
+    title: "Project Gallery | Innovation Kitchen & Bath Orlando",
+    description: "Explore our portfolio of luxurious kitchen remodels, custom bathroom oases, and sleek commercial slab claddings crafted by Central Florida's premier fabricators."
+  },
+  customizer: {
+    title: "3D Kitchen & Bath Design Customizer | Innovation Kitchen & Bath",
+    description: "Design your dream space in real-time with our interactive countertop and cabinet customizer. Visualize quartz, granite, porcelain slab, and cabinet pairings."
+  },
+  estimator: {
+    title: "Instant Remodeling & Countertop Cost Estimator | IKB Orlando",
+    description: "Calculate realistic countertop and cabinet pricing in real-time. Input your dimensions, materials, and edge profiles for an instant, transparent cost breakdown."
+  },
+  assistant: {
+    title: "Caleb - AI Design Assistant & Consultant | IKB",
+    description: "Consult Caleb, our expert AI interior design assistant. Get tailored countertop advice, cabinet color chemistry analysis, and custom hardware recommendations."
+  },
+  schedule: {
+    title: "Schedule Custom Laser-Templating & Consultation | IKB",
+    description: "Book your free, professional layout laser-templating consultation and material slab preview with Central Florida's leading fabrication team."
+  },
+  admin: {
+    title: "Lead Management Portal | Innovation Kitchen & Bath Admin",
+    description: "Secure lead management, contractor directories, and scheduling portal for authorized Innovation Kitchen and Bath design consultants."
+  },
+  login: {
+    title: "Contractor & Partner Access Portal | IKB Orlando",
+    description: "Authorized login for local building contractors, architects, and design partners of Innovation Kitchen and Bath."
+  }
+};
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'showroom' | 'gallery' | 'customizer' | 'estimator' | 'assistant' | 'schedule' | 'admin'>('showroom');
+  const [activeTab, setActiveTab] = useState<'showroom' | 'gallery' | 'customizer' | 'estimator' | 'assistant' | 'schedule' | 'admin' | 'login'>('showroom');
   const [sector, setSector] = useState<'residential' | 'commercial'>('residential');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isApproved, setIsApproved] = useState<boolean | null>(null);
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (usr) => {
+      setCurrentUser(usr);
+      if (!usr) {
+        setIsApproved(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setIsApproved(null);
+      return;
+    }
+    
+    if (currentUser.email === 'xabdieldiaz2010@gmail.com') {
+      setIsApproved(true);
+      return;
+    }
+
+    const unsubscribe = onSnapshot(
+      doc(db, 'contractors', currentUser.uid),
+      (docSnap) => {
+        if (docSnap.exists()) {
+          setIsApproved(docSnap.data()?.approved === true);
+        } else {
+          setIsApproved(false);
+        }
+      },
+      (err) => {
+        console.error("Error fetching approval status:", err);
+        setIsApproved(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [currentUser]);
   
   // Mobile Nav menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -136,6 +268,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-50 text-neutral-800 flex flex-col font-sans select-text selection:bg-amber-100 selection:text-neutral-900">
+      {/* Dynamic React Helmet for SEO Optimization */}
+      <Helmet 
+        title={SEO_METADATA[activeTab]?.title || "Innovation Kitchen & Bath | Premier Stone Fabrication"}
+        description={SEO_METADATA[activeTab]?.description || "Innovation Kitchen and Bath premier stone fabrication."}
+      />
       
       {/* 1. TOP INFORMATION RIBBON */}
       <div className="bg-neutral-950 text-neutral-400 py-2.5 px-4 text-[11px] font-medium border-b border-neutral-900">
@@ -143,10 +280,13 @@ export default function App() {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Serving Central Florida Since 2011</span>
             <span className="hidden md:flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-neutral-500" /> Mon-Sat: 8:00 AM - 6:00 PM</span>
+            <a href="mailto:Innovationkb1@gmail.com" className="hidden lg:flex items-center gap-1.5 hover:text-amber-400 transition-colors">
+              <Mail className="w-3.5 h-3.5 text-amber-500" /> Innovationkb1@gmail.com
+            </a>
           </div>
           <div className="flex items-center gap-4 font-mono font-semibold text-white">
-            <a href="tel:4075550111" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
-              <Phone className="w-3.5 h-3.5 text-amber-500" /> (407) 555-0111
+            <a href="tel:4079892802" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
+              <Phone className="w-3.5 h-3.5 text-amber-500" /> (407) 989-2802
             </a>
             <span className="bg-amber-500 text-neutral-950 px-2 py-0.5 rounded text-[10px] tracking-wide uppercase">In-House Slabs Shop</span>
           </div>
@@ -160,18 +300,10 @@ export default function App() {
           {/* Logo Brand Title */}
           <button 
             onClick={() => setActiveTab('showroom')}
-            className="flex items-center gap-3 cursor-pointer group/logo text-left hover:opacity-90 transition-opacity focus:outline-none"
+            className="flex items-center gap-3 cursor-pointer group/logo text-left hover:opacity-95 transition-opacity focus:outline-none"
             aria-label="Return to Slab Showroom"
           >
-            <div className="w-10 h-10 bg-neutral-900 text-white rounded-xl flex items-center justify-center font-display font-semibold tracking-wider border border-neutral-800 shadow-md group-hover/logo:border-amber-500/50 transition-colors">
-              IKB
-            </div>
-            <div>
-              <h1 className="font-display font-bold text-neutral-900 text-base md:text-lg tracking-tight leading-none flex items-center gap-1 group-hover/logo:text-amber-500 transition-colors">
-                Innovation Kitchen and Bath <span className="text-amber-500 font-serif">®</span>
-              </h1>
-              <span className="text-[10px] text-neutral-400 font-semibold tracking-widest uppercase block mt-1">High-End Remodeling & Stone Fabrication</span>
-            </div>
+            <InnovationLogo className="h-12 w-auto hover:scale-102 transition-transform" />
           </button>
 
           {/* Desktop Navigation Links */}
@@ -202,6 +334,45 @@ export default function App() {
 
           {/* Call-to-Action Call Out & Mobile Trigger */}
           <div className="flex items-center gap-3">
+            <a
+              href="tel:4079892802"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border bg-white hover:bg-neutral-50 text-neutral-800 border-neutral-200 transition-all cursor-pointer shadow-sm"
+              title="Call (407) 989-2802"
+            >
+              <Phone className="w-3.5 h-3.5 text-amber-500" />
+              <span className="hidden sm:inline">(407) 989-2802</span>
+              <span className="sm:hidden">Call</span>
+            </a>
+
+            {currentUser ? (
+              <button
+                onClick={() => { setActiveTab(isApproved ? 'admin' : 'login'); setIsMobileMenuOpen(false); }}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                  activeTab === 'admin' || activeTab === 'login'
+                    ? 'bg-neutral-900 text-white border-neutral-950 shadow-sm'
+                    : 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-200'
+                }`}
+                title="Access Contractor Leads Ledger"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                <span className="hidden sm:inline-block max-w-[120px] truncate">{currentUser.email?.split('@')[0]} Ledger</span>
+                <span className="sm:hidden">Ledger</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => { setActiveTab('login'); setIsMobileMenuOpen(false); }}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                  activeTab === 'login'
+                    ? 'bg-neutral-900 text-white border-neutral-950 shadow-sm'
+                    : 'bg-white hover:bg-neutral-50 text-neutral-800 border-neutral-200'
+                }`}
+                title="Contractor Login"
+              >
+                <Lock className="w-3.5 h-3.5 text-amber-500" />
+                <span>Login</span>
+              </button>
+            )}
+
             <button
               onClick={() => { setActiveTab('schedule'); setIsMobileMenuOpen(false); }}
               className="hidden sm:inline-flex bg-neutral-950 hover:bg-neutral-800 text-white font-semibold text-xs py-2.5 px-4 rounded-xl shadow-md transition-all cursor-pointer items-center gap-1"
@@ -231,7 +402,14 @@ export default function App() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id as any); setIsMobileMenuOpen(false); }}
+                onClick={() => { 
+                  if (tab.id === 'admin') {
+                    setActiveTab(isApproved ? 'admin' : 'login');
+                  } else {
+                    setActiveTab(tab.id as any);
+                  }
+                  setIsMobileMenuOpen(false); 
+                }}
                 className={`flex items-center gap-2.5 px-4 py-3 rounded-xl transition-all text-xs font-semibold ${
                   activeTab === tab.id
                     ? 'bg-neutral-900 text-white'
@@ -521,7 +699,32 @@ export default function App() {
           )}
 
           {activeTab === 'admin' && (
-            <AdminPortal />
+            isApproved ? (
+              <AdminPortal />
+            ) : (
+              <div className="max-w-md mx-auto my-12 text-center bg-white border border-neutral-200 rounded-2xl p-8 shadow-sm flex flex-col items-center gap-4">
+                <Lock className="w-10 h-10 text-amber-500" />
+                <h3 className="font-display font-medium text-lg text-neutral-900">Leads Ledger Security Lock</h3>
+                <p className="text-xs text-neutral-500 max-w-xs leading-relaxed">
+                  This database is restricted. Please sign in with your verified contractor credentials to view active leads. Only approved contractor partners can access custom client templates.
+                </p>
+                <button
+                  onClick={() => setActiveTab('login')}
+                  className="px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-xs font-semibold cursor-pointer transition-all"
+                >
+                  Go to Contractor Login
+                </button>
+              </div>
+            )
+          )}
+
+          {activeTab === 'login' && (
+            <ContractorLogin 
+              currentUser={currentUser}
+              isApproved={isApproved}
+              onNavigateToShowroom={() => setActiveTab('showroom')}
+              onNavigateToAdmin={() => setActiveTab(isApproved ? 'admin' : 'login')}
+            />
           )}
         </div>
 
@@ -541,7 +744,12 @@ export default function App() {
               { title: "Commercial Stone Fabrication", desc: "Backlit onyx bar counters, corporate quartz lobby registration desks, medical-grade solid composite workspaces, and tile layouts." },
               { title: "Flooring & Tile Work", desc: "Precision alignment of large-format porcelain slabs, glass mosaics, marble tiles, and custom medallions with flawless waterjet grout line widths." }
             ].map((serv, i) => (
-              <div key={i} className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm hover:border-neutral-300 transition-all flex flex-col justify-between">
+              <motion.div 
+                key={i} 
+                whileHover={{ y: -6, scale: 1.02, boxShadow: "0 12px 30px -4px rgba(10, 17, 40, 0.08)" }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm hover:border-neutral-300/80 transition-all flex flex-col justify-between"
+              >
                 <div>
                   <h4 className="font-display font-bold text-neutral-950 text-sm mb-2">{serv.title}</h4>
                   <p className="text-xs text-neutral-500 leading-relaxed">{serv.desc}</p>
@@ -552,7 +760,7 @@ export default function App() {
                 >
                   Schedule Layout Survey <ChevronRight className="w-3.5 h-3.5" />
                 </button>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -599,15 +807,7 @@ export default function App() {
           {/* Brand Col */}
           <div className="md:col-span-4 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white text-neutral-950 rounded-xl flex items-center justify-center font-display font-semibold tracking-wider shadow-md">
-                IKB
-              </div>
-              <div>
-                <h4 className="font-display font-bold text-white text-base tracking-tight leading-none">
-                  Innovation Kitchen and Bath
-                </h4>
-                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-1 block">Remodeling & Stones Shop</span>
-              </div>
+              <InnovationLogo className="h-10 w-auto" />
             </div>
             <p className="text-xs text-neutral-500 leading-relaxed max-w-sm">
               We specialized in high-end, bespoke space remodeling in Central Florida since 2011. Equipped with a local design workshop and robotic waterjet CNC fabrication facility, we control flawless quality at every stage.
@@ -645,12 +845,27 @@ export default function App() {
 
           {/* Contact Col */}
           <div className="md:col-span-3 flex flex-col gap-3.5">
-            <h5 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Connect With IKB</h5>
+            <h5 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Connect With Us</h5>
             <div className="flex flex-col gap-2.5 text-xs text-neutral-500 font-mono">
               <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-neutral-600 flex-shrink-0" /> Orlando, Central Florida Service</p>
-              <a href="tel:4075550111" className="flex items-center gap-2 hover:text-white transition-colors"><Phone className="w-4 h-4 text-amber-500 flex-shrink-0" /> (407) 555-0111</a>
+              <a href="tel:4079892802" className="flex items-center gap-2 hover:text-white transition-colors"><Phone className="w-4 h-4 text-amber-500 flex-shrink-0" /> (407) 989-2802</a>
+              <a href="mailto:Innovationkb1@gmail.com" className="flex items-center gap-2 hover:text-white transition-colors"><Mail className="w-4 h-4 text-amber-500 flex-shrink-0" /> Innovationkb1@gmail.com</a>
               <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-neutral-600 flex-shrink-0" /> Mon-Sat: 8:00 AM - 6:00 PM</p>
               <p className="text-[10px] text-zinc-600 italic">Licensed & Insured Orlando Contractor</p>
+            </div>
+            {/* Social media connections */}
+            <div className="flex gap-2.5 mt-2">
+              <a href="https://www.facebook.com/share/19ApsVbi7f/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-amber-500 hover:text-neutral-950 transition-all shadow-md text-neutral-400" title="Follow us on Facebook">
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a href="https://www.instagram.com/innovationkb1?utm_source=qr" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-amber-500 hover:text-neutral-950 transition-all shadow-md text-neutral-400" title="Follow us on Instagram">
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a href="https://www.tiktok.com/@innovationkb1?_r=1&_t=ZP-97UetNL4oLm" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-amber-500 hover:text-neutral-950 transition-all shadow-md text-neutral-400" title="Follow us on TikTok">
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.74-3.99-1.72-.28-.25-.53-.53-.75-.83-.02 2.73-.01 5.46-.02 8.19-.08 2.22-.81 4.54-2.52 6.07-1.89 1.77-4.7 2.41-7.18 1.93-3-.49-5.61-2.91-6.1-5.91-.6-3.13 1.15-6.52 4.14-7.53.07 1.43.1 2.87.16 4.31-.77.24-1.52.75-1.92 1.46-.74 1.19-.66 2.85.25 3.9 1 1.23 2.87 1.6 4.3 1 1.48-.56 2.45-2.11 2.45-3.69-.02-3.81-.01-7.62-.01-11.43.01-1.63.01-3.26.01-4.89z"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
